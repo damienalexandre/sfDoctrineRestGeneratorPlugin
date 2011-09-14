@@ -20,7 +20,7 @@ class sfTesterJsonResponse extends sfTester
 
   /**
    * Try to decode the response body from json format
-   *
+   * 
    * @return boolean
    */
   public function isJson()

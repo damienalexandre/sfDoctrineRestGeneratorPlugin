@@ -2,6 +2,7 @@
   {
     $this->object->save();
 
+<?php $primaryKey = $this->configuration->getValue('default.update_key', Doctrine::getTable($this->getModelClass())->getIdentifier()); ?>
     // Set a Location header with the path to the new / updated object
     $this->getResponse()->setHttpHeader('Location', $this->getController()->genUrl(
       array_merge(array(

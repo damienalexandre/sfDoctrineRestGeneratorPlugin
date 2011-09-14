@@ -10,6 +10,7 @@ generator:
 #        formats_enabled:               [ json, xml, yaml ]    # enabled formats
 #        formats_strict:                true
 #        separator:                     ','     # separator used for multiple filters
+#        camelize:                      true
       get:
 #        additional_params:             []      # list here additionnal params names, which are not object properties
 #        default_format:                json    # the default format of the response. If not set, will default to json. accepted values are "json", "xml" or "yaml"

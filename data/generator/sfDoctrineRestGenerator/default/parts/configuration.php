@@ -91,6 +91,12 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
 <?php unset($this->config['default']['separator']) ?>
   }
 
+  public function getCamelize()
+  {
+    return <?php echo $this->asPhp(isset($this->config['default']['camelize']) ? $this->config['default']['camelize'] : true) ?>;
+<?php unset($this->config['default']['camelize']) ?>
+  }
+
 <?php include dirname(__FILE__).'/paginationConfiguration.php' ?>
 
 <?php include dirname(__FILE__).'/sortConfiguration.php' ?>
