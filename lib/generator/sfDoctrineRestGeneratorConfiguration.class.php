@@ -21,7 +21,8 @@ class sfDoctrineRestGeneratorConfiguration
         'formats_enabled'             => $this->getFormatsEnabled(),
         'formats_strict'              => $this->getFormatsStrict(),
         'separator'                   => $this->getSeparator(),
-        'camelize'                    => $this->getCamelize()
+        'camelize'                    => $this->getCamelize(),
+        'root_name'                   => $this->getRootName(),
       ),
       'get'     => array(
         'additional_params'           => $this->getAdditionalParams(),

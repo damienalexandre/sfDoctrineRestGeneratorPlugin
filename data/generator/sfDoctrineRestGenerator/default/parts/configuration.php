@@ -3,10 +3,7 @@
 /**
  * <?php echo $this->getModuleName() ?> module configuration.
  *
- * @package    ##PROJECT_NAME##
  * @subpackage <?php echo $this->getModuleName()."\n" ?>
- * @author     ##AUTHOR_NAME##
- * @version    SVN: $Id: configuration.php 24171 2009-11-19 16:37:50Z Kris.Wallsmith $
  */
 abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfiguration extends sfDoctrineRestGeneratorConfiguration
 {
@@ -95,6 +92,12 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
   {
     return <?php echo $this->asPhp(isset($this->config['default']['camelize']) ? $this->config['default']['camelize'] : true) ?>;
 <?php unset($this->config['default']['camelize']) ?>
+  }
+
+  public function getRootName()
+  {
+    return <?php echo $this->asPhp(isset($this->config['default']['root_name']) ? $this->config['default']['root_name'] : $this->getModelClass()) ?>;
+<?php unset($this->config['default']['root_name']) ?>
   }
 
 <?php include dirname(__FILE__).'/paginationConfiguration.php' ?>

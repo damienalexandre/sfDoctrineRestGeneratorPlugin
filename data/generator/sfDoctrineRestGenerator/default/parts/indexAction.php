@@ -82,6 +82,6 @@
 
     $serializer = $this->getSerializer();
     $this->getResponse()->setContentType($serializer->getContentType());
-    $this->output = $serializer->serialize($this->objects, $this->model);
+    $this->output = $serializer->serialize($this->objects, <?php echo $this->asPhp($this->configuration->getValue('default.root_name')); ?>);
     unset($this->objects);
   }
