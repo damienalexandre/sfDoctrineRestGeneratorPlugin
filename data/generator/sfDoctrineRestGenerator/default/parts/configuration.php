@@ -100,6 +100,12 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
 <?php unset($this->config['default']['root_name']) ?>
   }
 
+  public function getPluralRootName()
+  {
+    return <?php echo $this->asPhp(isset($this->config['default']['plural_root_name']) ? $this->config['default']['plural_root_name'] : false) ?>;
+<?php unset($this->config['default']['plural_root_name']) ?>
+  }
+
 <?php include dirname(__FILE__).'/paginationConfiguration.php' ?>
 
 <?php include dirname(__FILE__).'/sortConfiguration.php' ?>

@@ -12,6 +12,7 @@ generator:
 #        separator:                     ','     # separator used for multiple filters
 #        camelize:                      true
 #        root_name:                     ##MODEL_CLASS##
+#        plural_root_name:              false   # you can overide the plural root node name (if false, we add a "s" to root_name)
       get:
 #        additional_params:             []      # list here additionnal params names, which are not object properties
 #        default_format:                json    # the default format of the response. If not set, will default to json. accepted values are "json", "xml" or "yaml"
@@ -26,7 +27,7 @@ generator:
 #        pagination_enabled:            false   # set to true to activate the pagination
 #        pagination_custom_page_size:   false   # set to true to allow the client to pass a page_size parameter
 #        pagination_page_size:          100     # the default number of items in a page
-#        sort_custom:                   false   # set to true to allow the client to pass a sort_by and a sort_order parameter
+#        sort_custom:                   false   # set to true to allow the client to pass a orderby and a sortorder parameter
 #        sort_default:                  []      # set to [column, asc|desc] in order to sort on a column
 #        filters:                               # list here the filters
 #          created_at:                  { date_format: 'd-m-Y', multiple: true }  # for instance
