@@ -22,7 +22,8 @@
 
     try
     {
-      $this->validateCreate($content);
+      $params = $this->parsePayload($content);
+      $params = $this->validateCreate($params);
     }
     catch (Exception $e)
     {
@@ -52,6 +53,6 @@
     }
 
     $this->object = $this->createObject();
-    $this->updateObjectFromRequest($content);
+    $this->updateObjectFromRequest($params);
     return $this->doSave();
   }

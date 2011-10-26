@@ -47,7 +47,7 @@
     }
 
     $this->queryFetchOne($params);
-    $this->forward404Unless(is_array($this->objects[0]));
+    $this->forward404Unless(is_array($this->objects[0]) && !empty($this->objects[0]));
 
 <?php foreach ($this->configuration->getValue('get.object_additional_fields') as $field): ?>
     $this->embedAdditional<?php echo $field ?>(0, $params);

@@ -1,4 +1,4 @@
-  protected function updateObjectFromRequest($content)
+  protected function updateObjectFromRequest($params)
   {
-    $this->object->importFrom('array', $this->parsePayload($content));
+    $this->object->importFrom('array', $params);
   }

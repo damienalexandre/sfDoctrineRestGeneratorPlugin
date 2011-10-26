@@ -17,7 +17,7 @@
     try
     {
       $format = $this->getFormat();
-      $this->validateIndex($params);
+      $params = $this->validateIndex($params);
     }
     catch (Exception $e)
     {
@@ -82,6 +82,6 @@
 
     $serializer = $this->getSerializer();
     $this->getResponse()->setContentType($serializer->getContentType());
-    $this->output = $serializer->serialize($this->objects, <?php echo $this->asPhp($this->configuration->getValue('default.root_name')); ?>);
+    $this->output = $serializer->serialize($this->objects, <?php echo $this->asPhp($this->configuration->getValue('default.root_name')); ?>, true, <?php echo $this->asPhp($this->configuration->getValue('default.plural_root_name')); ?>);
     unset($this->objects);
   }

@@ -16,9 +16,16 @@
 
     $request->setRequestFormat('html');
 
+    // retrieve the object
+<?php $primaryKey = Doctrine_Core::getTable($this->getModelClass())->getIdentifier() ?>
+    $primaryKey = $request->getParameter('<?php echo $primaryKey ?>');
+    $this->object = $this->query(array('<?php echo $primaryKey ?>' => $primaryKey))->fetchOne();
+    $this->forward404Unless($this->object);
+
     try
     {
-      $this->validateUpdate($content);
+      $params = $this->parsePayload($content);
+      $params = $this->validateUpdate($params);
     }
     catch (Exception $e)
     {
@@ -47,13 +54,7 @@
       return sfView::SUCCESS;
     }
 
-    // retrieve the object
-<?php $primaryKey = Doctrine_Core::getTable($this->getModelClass())->getIdentifier() ?>
-    $primaryKey = $request->getParameter('<?php echo $primaryKey ?>');
-    $this->object = Doctrine_Core::getTable($this->model)->findOneBy<?php echo sfInflector::camelize($primaryKey) ?>($primaryKey);
-    $this->forward404Unless($this->object);
-
     // update and save it
-    $this->updateObjectFromRequest($content);
+    $this->updateObjectFromRequest($params);
     return $this->doSave();
   }

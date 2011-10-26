@@ -10,7 +10,7 @@
     $this->forward404Unless($request->isMethod(sfRequest::DELETE));
     $primaryKey = $request->getParameter('<?php echo $primaryKey ?>');
     $this->forward404Unless($primaryKey);
-    $this->item = Doctrine::getTable($this->model)->findOneBy<?php echo sfInflector::camelize($primaryKey) ?>($primaryKey);
+    $this->item = $this->query(array('<?php echo $primaryKey ?>' => $primaryKey))->fetchOne();
     $this->forward404Unless($this->item);
     $this->item->delete();
     return sfView::NONE;
