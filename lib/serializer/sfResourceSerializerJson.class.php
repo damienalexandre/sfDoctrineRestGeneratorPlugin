@@ -73,11 +73,15 @@ class sfResourceSerializerJson extends sfResourceSerializer
 
     $array = $this->unPluralizeCollections($array);
 
-    //var_dump($array['languages']);die();
-
     return $array;
   }
 
+  /**
+   * Deal with collections
+   * 
+   * @param array $array
+   * @return array
+   */
   public function unPluralizeCollections($array)
   {
     foreach ($array as $key => $nodes)
