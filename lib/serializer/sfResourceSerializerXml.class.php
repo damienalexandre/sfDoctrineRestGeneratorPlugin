@@ -7,15 +7,21 @@ class sfResourceSerializerXml extends sfResourceSerializer
     return 'application/xml';
   }
 
-  public function serialize($array, $rootNodeName = 'data', $collection = true)
+  public function serialize($array, $rootNodeName = 'data', $collection = true, $pluralRootNodeName = false)
   {
     $camelizedRootNodeName = $this->camelize($rootNodeName);
-    return $this->arrayToXml($array, $camelizedRootNodeName, 0, $collection);
+
+    if ($pluralRootNodeName)
+    {
+      $pluralRootNodeName = $this->camelize($pluralRootNodeName);
+    }
+
+    return $this->arrayToXml($array, $camelizedRootNodeName, 0, $collection, $pluralRootNodeName);
   }
 
   /**
    * Transform the payload into array assuming the payload is XML formatted.
-   * 
+   *
    * @param string $payload
    * @return array
    * @throw Exception
@@ -30,6 +36,11 @@ class sfResourceSerializerXml extends sfResourceSerializer
       throw new sfException("Empty payload, can't unserialize it.");
     }
 
+    // Remove all the XML comments
+    // Because SimpleXml use them as SimpleXmlElement and there is NO way
+    // to know if a node is a comment or an Element.
+    $payload = preg_replace('~<!--.+?-->~sm', '', $payload);
+
     // Try to parse the XML
     $xml = @simplexml_load_string(
       $payload,
@@ -42,7 +53,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
     {
       $errors = libxml_get_errors();
       $exception_message = '';
-      
+
       foreach ($errors as $error)
       {
         $exception_message .= $this->formatXmlError($error);
@@ -51,21 +62,8 @@ class sfResourceSerializerXml extends sfResourceSerializer
       libxml_clear_errors();
       throw new sfException("XML parsing error(s): \n".$exception_message);
     }
-    
+
     $return = $this->unserializeToArray($xml);
-
-    // Shift any root node and return only the nested array
-    if (is_array($return) && count($return) == 1)
-    {
-      // Don't want to break up the $return array
-      $return_shifted = $return;
-      $collection_return = array_shift($return_shifted);
-
-      if (is_array($collection_return))
-      {
-        $return = $collection_return;
-      }
-    }
 
     return $return;
   }
@@ -79,7 +77,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
   protected function formatXmlError($error)
   {
     $return  = "\n\n";
-    
+
     switch ($error->level)
     {
       case LIBXML_ERR_WARNING:
@@ -118,16 +116,22 @@ class sfResourceSerializerXml extends sfResourceSerializer
         if (
                 (!is_array($item) && (!is_object($item))) ||
                 ($item instanceof SimpleXMLElement &&
-                        (count((array) $item) < 1 || (trim((string)$item) === '') )
+                        (count((array) $item) < 1 || (trim((string)$item) === '') ) &&
+                        !(($tmp = (array) $item) && count($tmp) > 0 && !isset($tmp[0])) // Deep array with keys?
                 )
            )
         {
+
           $item = trim((string)$item);
           unset($data[$name]);
 
           if ('' != $item)
           {
             $data[sfInflector::underscore($name)] = $this->unserializeToArray($item, true);
+          }
+          else
+          {
+            $data[sfInflector::underscore($name)] = null;
           }
         }
         else
@@ -140,14 +144,21 @@ class sfResourceSerializerXml extends sfResourceSerializer
     return $data;
   }
 
-  protected function arrayToXml($array, $rootNodeName = 'Data', $level = 0, $collection = true)
+  protected function arrayToXml($array, $rootNodeName = 'Data', $level = 0, $collection = true, $pluralRootNodeName = false)
   {
     $xml = '';
 
     if (0 == $level)
     {
-      $plural = (true === $collection) ? 's' : '';
-      $xml .= '<?xml version="1.0" encoding="utf-8"?><'.$rootNodeName.$plural.'>';
+      if ($pluralRootNodeName)
+      {
+        $xml .= '<?xml version="1.0" encoding="utf-8"?><'.$pluralRootNodeName.'>';
+      }
+      else
+      {
+        $plural = (true === $collection) ? 's' : '';
+        $xml .= '<?xml version="1.0" encoding="utf-8"?><'.$rootNodeName.$plural.'>';
+      }
     }
 
     foreach ($array as $key => $value)
@@ -194,7 +205,14 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
     if (0 == $level)
     {
-      $xml .= '</'.$rootNodeName.$plural.'>';
+      if ($pluralRootNodeName)
+      {
+        $xml .= '</'.$pluralRootNodeName.'>';
+      }
+      else
+      {
+        $xml .= '</'.$rootNodeName.$plural.'>';
+      }
     }
 
     return $xml;
