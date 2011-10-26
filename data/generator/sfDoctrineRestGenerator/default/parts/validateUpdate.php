@@ -1,15 +1,16 @@
   /**
    * Applies the update validators to the payload posted to the service
    *
-   * @param   string   $payload  A payload string
+   * @param   array   $params  A parsed payload array
+   * @return  array   $params  A cleaned params array
    */
-  public function validateUpdate($payload)
+  public function validateUpdate($params)
   {
-    $params = $this->parsePayload($payload);
-
     $validators = $this->getUpdateValidators();
-    $this->validate($params, $validators);
+    $params = $this->validate($params, $validators);
 
     $postvalidators = $this->getUpdatePostValidators();
     $this->postValidate($params, $postvalidators);
+
+    return $params;
   }
