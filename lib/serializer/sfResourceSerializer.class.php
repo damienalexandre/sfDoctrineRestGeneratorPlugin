@@ -59,6 +59,6 @@ abstract class sfResourceSerializer
     return $serializer;
   }
 
-  abstract public function serialize($array, $rootNodeName = 'data', $collection = true);
+  abstract public function serialize($array, $rootNodeName = 'data', $collection = true, $plural_root_name = false);
   abstract public function unserialize($payload);
 }
