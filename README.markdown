@@ -22,6 +22,8 @@ for data exchange. Here are some key features :
 
 ## How to install
 
+### Symfony automatic install
+
   * go to your project's root
 
   * Install the plugin:
@@ -33,8 +35,13 @@ for data exchange. Here are some key features :
 
          ./symfony cc
 
+### Using subversion (the code might be older!)
 
-  * alternatively, you might prefer to install this plugin as a Subversion dependancy. In this case, here is the repository: [http://svn.symfony-project.com/plugins/sfDoctrineRestGeneratorPlugin](http://svn.symfony-project.com/plugins/sfDoctrineRestGeneratorPlugin). There is also a Git mirror on GitHub : [https://github.com/xavierlacot/sfDoctrineRestGeneratorPlugin](https://github.com/xavierlacot/sfDoctrineRestGeneratorPlugin)
+  * [http://svn.symfony-project.com/plugins/sfDoctrineRestGeneratorPlugin](http://svn.symfony-project.com/plugins/sfDoctrineRestGeneratorPlugin).
+
+#### Using git
+
+  * [https://github.com/xavierlacot/sfDoctrineRestGeneratorPlugin](https://github.com/xavierlacot/sfDoctrineRestGeneratorPlugin)
 
 ## Usage
 
@@ -78,7 +85,7 @@ If we want to expose the model "Post" through a REST API, we will simply type
 the command:
 
 
-        ./symfony doctrine:generate-rest-module  api post Post
+        ./symfony doctrine:generate-rest-module api post Post
 
 
 This will generate:
@@ -100,6 +107,8 @@ This will generate:
    * lib: contains an empty "postGeneratorConfiguration" class, which extends a on-the-fly generated "BasePostGeneratorConfiguration" class,
    * templates
 
+ * a lime functional test skeleton in /test/functional/api
+
  * after a first request has been made to the REST module, the cache directory will contain the code of the generated module, and particularly the code of the "autopostActions" class, which you should check in order to understand the way the plugin works.
 
 
@@ -119,7 +128,6 @@ http://api.example.com/myPostAPI.json:
              module:  post
              column:  id
              format:  xml
-
 
 
 ## Main configuration
@@ -161,7 +169,8 @@ Second, consider a way to make your webservice more secure:
  * use SSL whenever possible, so that the posted data do not get intercepted and altered by a third party (man in the middle),
  * use HTTP authentication,
  * use a stronger / more extensible authentication system (OAuth for example),
- * deliver unique API keys to your clients, and check the usage that they do of the API.
+ * deliver unique API keys to your clients, and check the usage that they do of the API,
+ * improve the generated validators with your own business rules
 
 
 ## Detailed service configuration
@@ -175,7 +184,7 @@ Here is the default content of the `generator.yml` file:
           class: sfDoctrineRestGenerator
           param:
             model_class:   Post
-
+        #    actions_base_class: sfActions
             config:
               default:
         #        fields:                                # list here the fields.
@@ -183,6 +192,9 @@ Here is the default content of the `generator.yml` file:
         #        formats_enabled:               [ json, xml, yaml ]    # enabled formats
         #        formats_strict:                true
         #        separator:                     ','     # separator used for multiple filters
+        #        camelize:                      true    # tell the serializers to translate fieldnames to camelCase
+        #        root_name:                     ##MODEL_CLASS##  # the root node name used for serilize one ressource
+        #        plural_root_name:              false   # you can overide the plural root node name (if false, we add a "s" to root_name)
               get:
         #        additional_params:             []      # list here additional params names, which are not object properties
         #        default_format:                json    # the default format of the response. If not set, will default to json. Accepted values are  "json", "xml" or "yaml"
@@ -210,6 +222,11 @@ detailed in the following chapters.
 
 The `model_class` parameters defines the name of the Doctrine model the REST
 module is bound to.
+
+### actions_base_class
+
+All the generated controllers will extend this class.
+
 
 ### default
 
@@ -256,11 +273,26 @@ The separator to use in url when passing objects primary keys. The generated
 module allows to require several resources identified by their ids:
 http://api.example.com/post/?id=12,17,19
 
+        #        camelize:                      true    # tell the serializers to translate fieldnames to camelCase
+        #        root_name:                     ##MODEL_CLASS##  # the root node name used for serilize one ressource
+        #        plural_root_name:              false   # you can overide the plural root node name (if false, we add a "s" to root_name)
+
+### camelize
+
+On serialization, your fieldnames will be camelCased by default (only XML atm).
+
+### root_name
+
+You can customize the root_name of the Json / Xml outputs (by default, it's the model name).
+
+### plural_root_name
+
+By default, collections of ressources are put in a "s" suffixed model name. But for a Company model, you don't want to have a `Companys` XML root name. Simply write your own here.
+
 
 ### get
 
 The `get` option lists several options specific to the "get" operation:
-
 
 #### additional_params
 
@@ -591,11 +623,12 @@ picking one of the following topics:
  * possibility to disable events notification / filtering (performance)
  * more serializers ([BSON](http://bsonspec.org/) or RDF for example). Currently, the plugin only allows to serialize the resultsets as a XML, YAML or JSON feeds (see the chapter "Serialization"). Mobile clients, which require the most compact possible streams, would take benefit from a BSON serialization.
  * possibility to generate client libraries (sfDoctrineRestClientGenerator ?)
- * possibility to generate unit tests
  * possibility to generate API documentation
  * document authentication solutions
  * all the possible feedback!
-
+ * recode the post validators logic (to use the full params array on each post validator, same as sfForm)
+ * camelize on all the serializer? (only XML do that atm)
+ * don't use the templating system (performance)
 
 ## Contribute to the plugin, ask for help
 
@@ -611,10 +644,20 @@ licensed under the MIT license.
 
 ## Changelog
 
-### trunk
+### master on damienalexandre/sfDoctrineRestGeneratorPlugin
+
+ * Improve the XML and Json serializer (deal with collections, plural naming, Json and XML are now a lot more consistant)
+ * Add a `camelize` option
+ * Add a `root_name` option
+ * Add a `plural_root_name` option
+ * Use the query() method in update and delete action (you can now have consistent query on all methods)
+ * The validated payload array is now kept and send to updateObjectFromRequest(). This is allowing a lot of flexibility (like saving sfValidatedFile instance i.e.)
+ * Add a dynamically generated functional test on each new module
+ * Add a `location` header on create and update response with the uri to the new ressource
+
+### master
 
  * Enabled the `show` route by default
-
 
 ### version 0.9.4 - 2010-11-25
 

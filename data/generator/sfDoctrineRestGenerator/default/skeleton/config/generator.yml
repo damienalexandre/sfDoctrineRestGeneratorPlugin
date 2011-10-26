@@ -2,7 +2,7 @@ generator:
   class: sfDoctrineRestGenerator
   param:
     model_class:   ##MODEL_CLASS##
-
+#    actions_base_class: sfActions
     config:
       default:
 #        fields:                                # list here the fields.
@@ -10,8 +10,8 @@ generator:
 #        formats_enabled:               [ json, xml, yaml ]    # enabled formats
 #        formats_strict:                true
 #        separator:                     ','     # separator used for multiple filters
-#        camelize:                      true
-#        root_name:                     ##MODEL_CLASS##
+#        camelize:                      true    # tell the serializers to translate fieldnames to camelCase
+#        root_name:                     ##MODEL_CLASS##  # the root node name used for serilize one ressource
 #        plural_root_name:              false   # you can overide the plural root node name (if false, we add a "s" to root_name)
       get:
 #        additional_params:             []      # list here additionnal params names, which are not object properties
