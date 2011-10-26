@@ -7,7 +7,7 @@ class sfResourceSerializerYaml extends sfResourceSerializer
     return 'application/yaml';
   }
 
-  public function serialize($array, $rootNodeName = 'data', $collection = true)
+  public function serialize($array, $rootNodeName = 'data', $collection = true, $pluralRootNodeName = false)
   {
     return sfYaml::dump(array($rootNodeName => $array), 5);
   }
